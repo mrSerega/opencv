@@ -1,3 +1,4 @@
 ﻿  opencv-readimage.cpp
+c:\users\sega0\desktop\git_tmp\opencv\opencvtest\opencvtest\opencv-readimage.cpp(78): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   opencvtest.vcxproj -> C:\Users\sega0\Desktop\git_tmp\opencv\opencvtest\x64\Debug\opencvtest.exe
   opencvtest.vcxproj -> C:\Users\sega0\Desktop\git_tmp\opencv\opencvtest\x64\Debug\opencvtest.pdb (Partial PDB)

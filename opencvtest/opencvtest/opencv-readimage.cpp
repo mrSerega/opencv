@@ -2,6 +2,7 @@
 #include "opencv2/opencv.hpp"
 #include "opencv2/core.hpp"
 #include <vector>
+#include <Windows.h>
 
 #define firstparam 10
 #define secondparam 9
@@ -10,6 +11,32 @@
 #define pathtofiles "C:\\Users\\sega0\\Desktop\\positive-20170718T173229Z-001\\positive\\"
 #define filename "akn.002.078.left.avi"
 #define windowname "original"
+
+bool match(char const *needle, char const *haystack) {
+	for (; *needle != '\0'; ++needle) {
+		switch (*needle) {
+		case '?':
+			if (*haystack == '\0')
+				return false;
+			++haystack;
+			break;
+		case '*': {
+			if (needle[1] == '\0')
+				return true;
+			size_t max = strlen(haystack);
+			for (size_t i = 0; i < max; i++)
+				if (match(needle + 1, haystack + i))
+					return true;
+			return false;
+		}
+		default:
+			if (*haystack != *needle)
+				return false;
+			++haystack;
+		}
+	}
+	return *haystack == '\0';
+}
 
 using namespace cv;
 using namespace std;
@@ -44,70 +71,58 @@ int main() {
 	//load avis
 	vector<String> listOfAvi;
 
-	//input
-		listOfAvi.push_back("akn.002.014.left.avi");
-		listOfAvi.push_back("akn.002.040.left.avi");
-		listOfAvi.push_back("akn.002.078.left.avi");
-		listOfAvi.push_back("akn.002.084.left.avi");
-		listOfAvi.push_back("akn.002.098.left.avi");
-		listOfAvi.push_back("akn.002.135.left.avi");
-		listOfAvi.push_back("akn.003.023.left.avi");
-		listOfAvi.push_back("akn.003.027.left.avi");
-		listOfAvi.push_back("akn.003.134.left.avi");
-		listOfAvi.push_back("akn.019.037.left.avi");
+	//getInput
+	string path;
+	//cin >> path;
+	path = "C:\\Users\\sega0\\Desktop\\positive-20170718T173229Z-001\\positive\\akn.003*.avi";
+	int ind = path.find_last_of("\\");
+	string mask = path.substr(ind + 1);
+	path = path.substr(0, ind + 1);
+	//cout << "path: "<< path <<"\n";
+	//cout << "mask: "<< mask <<"\n";
+	path = path.append("*");
+	WIN32_FIND_DATA  FindFileData;
+	// wstring st = wstring(path.begin(), path.end());
+	///  LPCWSTR lpath = st.c_str();
+	// cout « lpath;
+	HANDLE const hf = FindFirstFile(path.c_str(), &FindFileData);
+	const char *msk = mask.c_str();
+	if (INVALID_HANDLE_VALUE != hf)
+	{
+		do
+		{
+			string name = &FindFileData.cFileName[0];
+			if (name != "." && name != "..")
+			{
+				const char *nme = name.c_str();
+				if (match(msk, nme)) {
+					listOfAvi.push_back(nme);
+				}
+				//cout << nme <<  " " << boolalpha << match(msk, nme) << "\n";
+			}
 
-		listOfAvi.push_back("akn.020.013.left.avi");
-		listOfAvi.push_back("akn.024.084.left.avi");
-		listOfAvi.push_back("akn.025.002.left.avi");
-		listOfAvi.push_back("akn.025.015.left.avi");
-		listOfAvi.push_back("akn.025.026.left.avi");
-		listOfAvi.push_back("akn.026.021.left.avi");
-		listOfAvi.push_back("akn.026.028.left.avi");
-		listOfAvi.push_back("akn.028.024.left.avi");
-		listOfAvi.push_back("akn.030.015.left.avi");
-		listOfAvi.push_back("akn.030.039.left.avi");
+		} while (NULL != FindNextFile(hf, &FindFileData));
 
-		listOfAvi.push_back("akn.030.049.left.avi");
-		listOfAvi.push_back("akn.031.016.left.avi");
-		listOfAvi.push_back("akn.033.063.left.avi");
-		listOfAvi.push_back("akn.033.073.left.avi");
-		listOfAvi.push_back("akn.034.025.left.avi");
-		listOfAvi.push_back("akn.035.017.left.avi");
-		listOfAvi.push_back("akn.036.021.left.avi");
-		listOfAvi.push_back("akn.036.050.left.avi");
-		listOfAvi.push_back("akn.036.056.left.avi");
-		listOfAvi.push_back("akn.060.018.left.avi");
-
-		listOfAvi.push_back("akn.151.063.left.avi");
-		listOfAvi.push_back("akn.151.079.left.avi");
-		listOfAvi.push_back("akn.151.157.left.avi");
-		listOfAvi.push_back("akn.152.015.left.avi");
-		listOfAvi.push_back("akn.152.036.left.avi");
-		listOfAvi.push_back("akn.154.010.left.avi");
-		listOfAvi.push_back("akn.154.021.left.avi");
-		listOfAvi.push_back("akn.154.059.left.avi");
-		listOfAvi.push_back("akn.155.002.left.avi");
-		listOfAvi.push_back("akn.155.008.left.avi");
-
-		listOfAvi.push_back("akn.155.036.left.avi");
-		listOfAvi.push_back("akn.155.052.left.avi");
-		listOfAvi.push_back("akn.155.085.left.avi");
-		listOfAvi.push_back("akn.156.108.left.avi");
-		listOfAvi.push_back("akn.156.116.left.avi");
-		listOfAvi.push_back("akn.157.023.left.avi");
-		listOfAvi.push_back("akn.157.032.left.avi");
-		listOfAvi.push_back("akn.158.044.left.avi");
-		listOfAvi.push_back("akn.159.004.left.avi");
-		listOfAvi.push_back("akn.160.012.left.avi");
+		FindClose(hf);
+	}
 
 	vector <Vec3f> circlesRad;
 	vector <Vec3f> circlesGreen;
 
 	for (int videoIndex = 0; videoIndex < listOfAvi.size(); ++videoIndex) {
 		
+		VideoCapture capture;
+
 		//load video
-		VideoCapture capture(string(pathtofiles).append(listOfAvi[videoIndex]));
-		if (!capture.isOpened()) std::cout << "Error when reading steam_avi";
+		try {
+			capture = *(new VideoCapture(string(pathtofiles).append(listOfAvi[videoIndex])));
+			if (!capture.isOpened()) std::cout << "Error when reading steam_avi";
+		}
+		catch (exception e) {
+			cout << -2;
+			return 0;
+		}
+		
 		//pic init
 		Mat frame;
 		Mat onlyRad;
@@ -123,8 +138,10 @@ int main() {
 			capture >> frame;
 
 			//check
-			if (frame.empty()) std::cout << "empty\n";
-			if (frame.empty()) break;
+			if (frame.empty()) {
+				cout << listOfAvi[videoIndex] << "\t" << -1<<endl;
+				break;
+			}
 
 			//detect colors
 			inRange(frame, Scalar(44, 19, 174), Scalar(114, 89, 244), onlyRad);
